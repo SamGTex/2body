@@ -28,3 +28,14 @@ make animation
 
 
 Hint: all file names contain the used method **euler/verlet** with chosen stepsize **h**
+
+## 3. Required Packages/Tools
+Install python libaries with Conda:
+```
+conda install numpy matplotlib pandas
+```
+
+Install ffmpeg with package manager (so save matplotlib animations as .mp4)
+```
+sudo apt-get install ffmpeg
+```
