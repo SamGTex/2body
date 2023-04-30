@@ -1,5 +1,10 @@
 # Two-body problem
-Simulation of the two-body problem, described by Newtons equation of motion and Newtons law of gravitation.
+Simulation of the two-body problem, described by Newton's equation of motion and Newton's law of gravitation.
+
+Using two numerical methods to solve the differential equation:
+> euler algorithm
+
+> verlet algorithm
 
 With inital values / parameters:
 - **Body 1:** mass $m_1$, 2D space vector $\vec{r_1}$, 2D velocity vector $\vec{v_1}$
