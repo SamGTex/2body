@@ -34,7 +34,17 @@ make animation
 
 Hint: all file names contain the used method **euler/verlet** with chosen stepsize **h**
 
-## 3. Required Packages/Tools
+## Demo
+Time Interval: [0, 100]
+
+Too small stepsize h=1.0
+https://user-images.githubusercontent.com/55881123/235359591-abadd867-2ad6-46d2-b170-4b4369e06764.mp4
+
+Adequate stepsize h=0.01
+https://user-images.githubusercontent.com/55881123/235359713-9f502876-1003-444e-9146-5ef892bdd4e0.mp4
+
+
+## Required Packages/Tools
 Install python libraries with Conda:
 ```
 conda install numpy matplotlib pandas
