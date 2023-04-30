@@ -1,5 +1,7 @@
 # Two-body problem
-Simulation of the two-body problem with inital values / parameters:
+Simulation of the two-body problem, described by Newtons equation of motion and Newtons law of gravitation.
+
+With inital values / parameters:
 - **Body 1:** mass $m_1$, 2D space vector $\vec{r_1}$, 2D velocity vector $\vec{v_1}$
 - **Body 2:** mass $m_2$, 2D space vector $\vec{r_2}$, 2D velocity vector $\vec{v_2}$
 - **Algorithm:** stepsize $h$
