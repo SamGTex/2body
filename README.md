@@ -30,7 +30,7 @@ make animation
 Hint: all file names contain the used method **euler/verlet** with chosen stepsize **h**
 
 ## 3. Required Packages/Tools
-Install python libaries with Conda:
+Install python libraries with Conda:
 ```
 conda install numpy matplotlib pandas
 ```
