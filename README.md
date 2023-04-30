@@ -52,7 +52,7 @@ Install python libraries with Conda:
 conda install numpy matplotlib pandas
 ```
 
-Install ffmpeg with package manager (so save matplotlib animations as .mp4)
+Install ffmpeg with package manager (to save matplotlib animations as .mp4)
 ```
 sudo apt-get install ffmpeg
 ```
