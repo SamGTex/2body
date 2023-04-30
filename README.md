@@ -4,22 +4,25 @@ Simulation of the two-body problem with inital values / parameters:
 - **Body 2:** mass $m_2$, 2D space vector $\vec{r_2}$, 2D velocity vector $\vec{v_2}$
 - **Algorithm:** stepsize $h$
 
+Attention: Currently you must enter the named parameters in main.cpp!
+> (Comming soon: config file with inital values)
+
 ## 1. Run simulation and plot trajectories
 ```
 make
 ```
-> write coordinates to *build/name.csv*
+- write coordinates to *build/name.csv*
 
-> plots of trajectories in *build/name.pdf*
+- plots of trajectories in *build/name.pdf*
 
-for each time-stepsize **h** and for both nummerically solving methods **euler** and **verlet**
+> for each time-stepsize **h** and for both nummerically solving methods **euler** and **verlet**
 
 
 ## 2. Create an animation of the trajectories
 ```
 make animation
 ```
-> movies in videos/build/name.mp4
+- movies in videos/build/name.mp4
 
 
-Hint: all file names include the method **euler/verlet** and the choosen stepsize **h**
+Hint: all file names contain the used method **euler/verlet** with chosen stepsize **h**
