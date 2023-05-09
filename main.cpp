@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cstdlib> //for exit(1) to catch errors
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <string>
 #include <tuple>
@@ -166,73 +167,95 @@ tuple<vec, vec, vec, vec> verlet(vec r1, vec r2, vec v1, vec v2, double m1, doub
     return make_tuple(r1, r2, v1, v2);
 }
 
+// read config file, get parameters
+tuple<vec, vec, vec, vec, double, double, double, double, int> get_config(string path){
+    ifstream configFile(path); // open the config file for reading
+
+    // define variables to store the parameters
+    vector<double> r1, r2, v1, v2;
+    double m1, m2, h, T_max;
+    int algorithm;
+
+    // read the parameters from the config file
+    string line;
+    char delim = '=';
+    while (getline(configFile, line)) {
+        // split line into paramName and paramValue using "="
+        stringstream ss(line);
+        string paramName, paramValue;
+        getline(ss, paramName, delim);
+        getline(ss, paramValue);
+
+        // split paramValue into two parts using ","
+        stringstream ss2(paramValue);
+        string part;
+        vector<double> values;
+        while (getline(ss2, part, ',')) {
+            values.push_back(stod(part));
+        }
+
+        if (paramName == "r1") {
+            r1 = values;
+        } else if (paramName == "r2") {
+            r2 = values;
+        } else if (paramName == "v1") {
+            v1 = values;
+        } else if (paramName == "v2") {
+            v2 = values;
+        } else if (paramName == "m1") {
+            m1 = stod(paramValue);
+        } else if (paramName == "m2") {
+            m2 = stod(paramValue);
+        } else if (paramName == "h") {
+            h = stod(paramValue);
+        } else if (paramName == "T_max") {
+            T_max = stod(paramValue);
+        } else if (paramName == "algorithm") {
+            algorithm = stoi(paramValue);
+        }
+    }
+
+    configFile.close(); // close the config file
+
+    return make_tuple(r1, r2, v1, v2, m1, m2, h, T_max, algorithm);
+}
+
+
 int main() {
-    // Var mass 1: initial conditions
-    const double m1 = 1.0;
-    const vec r1{0.0, 1.0};
-    const vec v1{0.8, 0.0}; //0.8
+    const string path_config = "config.txt";
 
-    // Var mass 2: initial conditions
-    const double m2 = 2.0; // =2
-    const vec r2{0.0, -0.5};
-    const vec v2{-0.4, 0.0};
+    // read in parameters from config file
+    tuple<vec, vec, vec, vec, double, double, double, double, int> params = get_config(path_config);
+  
+    vec r1 = get<0>(params);
+    vec r2 = get<1>(params);
+    vec v1 = get<2>(params);
+    vec v2 = get<3>(params);
+    double m1 = get<4>(params);
+    double m2 = get<5>(params);
+    double h = get<6>(params);
+    double T_max = get<7>(params);
+    int algorithm = get<8>(params);
 
-    // Var time
-    // t = i*h = 1*h, 2*h, ..., T_max
-    double T_max = 100.0;
+    // start time measurement
+    auto start_euler = chrono::high_resolution_clock::now(); 
+    
+    // start algorithm depending on config file parameter "algorithm"
+    if (algorithm==0){
+        cout << "Starting Euler algorithm" << endl;
+        euler(r1, r2, v1, v2, m1, m2, h, T_max);
 
-    // Euler algorithm >>>
-    // a)
-    euler(r1, r2, v1, v2, m1, m2, 1.0, T_max);
-    euler(r1, r2, v1, v2, m1, m2, 0.1, T_max);
+    }else if (algorithm==1){
+        cout << "Starting Verlet algorithm" << endl;
+        verlet(r1, r2, v1, v2, m1, m2, h, T_max);
+    } else{
+        cerr << "Algorithm not found!" << endl;
+    }
 
-    // b) time measurement for h=0.01
-    auto start_euler = chrono::high_resolution_clock::now();
-    euler(r1, r2, v1, v2, m1, m2, 0.01, T_max);
+    // stop time and print duration
     auto end_euler = chrono::high_resolution_clock::now();
     auto duration_euler = chrono::duration_cast<chrono::milliseconds>(end_euler - start_euler);
-    cout << "Euler algorithm duration: " << duration_euler.count() << " ms" << endl;
-
-    // c) h=0.05 and back with h=-0.05
-    // save last r1, r2, v1, v2 vector
-    tuple<vec, vec, vec, vec> result_euler = euler(r1, r2, v1, v2, m1, m2, 0.05, T_max);
-
-    vec r1_new_euler = get<0>(result_euler);
-    vec r2_new_euler = get<1>(result_euler);
-    vec v1_new_euler = get<2>(result_euler);
-    vec v2_new_euler = get<3>(result_euler);
-
-    // use the latest positions/velocities and use now h -> -h
-    // doesnt work
-    // euler(r1_new_euler, r2_new_euler, v1_new_euler, v2_new_euler, m1, m2, -0.05, T_max);
-
-    // <<<
-
-    // Verlet algorithm >>>
-    verlet(r1, r2, v1, v2, m1, m2, 1.0, T_max);
-    verlet(r1, r2, v1, v2, m1, m2, 0.1, T_max);
-
-    // time measurement for h=0.01
-    auto start_verlet = chrono::high_resolution_clock::now();
-    verlet(r1, r2, v1, v2, m1, m2, 0.01, T_max);
-    auto end_verlet = chrono::high_resolution_clock::now();
-    auto duration_verlet = chrono::duration_cast<chrono::milliseconds>(end_verlet - start_verlet);
-    cout << "Verlet algorithm duration: " << duration_verlet.count() << " ms" << endl;
-
-    // c) h=0.05 and back with h=-0.05
-    // save last r1, r2, v1, v2 vector
-    tuple<vec, vec, vec, vec> result_verlet = verlet(r1, r2, v1, v2, m1, m2, 0.05, T_max);
-
-    vec r1_new_verlet = get<0>(result_verlet);
-    vec r2_new_verlet = get<1>(result_verlet);
-    vec v1_new_verlet = get<2>(result_verlet);
-    vec v2_new_verlet = get<3>(result_verlet);
-
-    // use the latest positions/velocities and use now h -> -h, going back in time T_max -> -T_max
-    // doesent work
-    // verlet(r1_new_verlet, r2_new_verlet, v1_new_verlet, v2_new_verlet, m1, m2, -0.05, T_max);
-
-    // <<<
+    cout << "Algorithm duration: " << duration_euler.count() << " ms" << endl;
 
     return 0;
 }
