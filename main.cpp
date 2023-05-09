@@ -137,9 +137,6 @@ tuple<vec, vec, vec, vec> verlet(vec r1, vec r2, vec v1, vec v2, double m1, doub
         // m1
         a1_old = a1;
         a1 = get_a(r1, r2, m2); // update a
-        if (h < 0) {
-            a1 = vec_scalar(a1, -1); // flip sign of acceleration if h is negative
-        }
 
         r1_oold = r1_old;
         r1_old = r1;
@@ -152,9 +149,6 @@ tuple<vec, vec, vec, vec> verlet(vec r1, vec r2, vec v1, vec v2, double m1, doub
         // m2
         a2_old = a2;
         a2 = get_a(r2, r1_old, m1); // update a
-        if (h < 0) {
-            a2 = vec_scalar(a2, -1); // flip sign of acceleration if h is negative
-        }
 
         r2_oold = r2_old;
         r2_old = r2;
