@@ -1,6 +1,7 @@
+CONF = config.txt
 all: 2body plot
 
-2body: main.cpp | build
+2body: config.txt main.cpp | build
 	g++ -o 2body main.cpp
 	./2body
 	
@@ -10,10 +11,10 @@ build:
 build_anim:
 	mkdir -p videos/build
 
-plot: 2body plot.py | build
+plot: config.txt 2body plot.py | build
 	python plot.py
 
-animation: 2body | build_anim
+animation: config.txt 2body plot | build_anim
 	python animation.py
 	
 clean:
