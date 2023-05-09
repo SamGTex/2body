@@ -2,19 +2,45 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 import pandas as pd
+import time
 
-def read_animate_save(h, forward_factor, name, max_size=None, fps=60):
-    # name = euler, verlet
+def get_params(path):
+    #get parameters from config.txt
+    with open(path, "r") as f:
+        for line in f:
+            if "h=" in line:
+                h = line.split("=")[1].strip()
+            elif "algorithm=" in line:
+                algorithm_int = int(line.split("=")[1].strip())
+    
+    # fix h: _ instad of . and 6 digits after comma
+    h = h.replace(".", "_")
+    h_floats = h.split("_")[1]
+    if len(h_floats) < 6:
+        h = h + (6-len(h_floats))*"0"
+
+    # fix algorithm
+    if algorithm_int==0:
+        algorithm = "euler"
+    elif algorithm_int==1: 
+        algorithm = "verlet"
+    else:
+        print("algorithm not defined")
+    
+    return h, algorithm
+
+def read_animate_save(h, forward_factor, algorithm, max_size=None, fps=60):
+    # algorithm = euler, verlet
     # max_size of the file in mB
     # forward_factor = slow factor
 
     #read in data
-    df1 = pd.read_csv(f"build/{name}_r1_h{h}.csv")
-    df2 = pd.read_csv(f"build/{name}_r2_h{h}.csv")
+    df1 = pd.read_csv(f"build/{algorithm}_r1_h{h}.csv")
+    df2 = pd.read_csv(f"build/{algorithm}_r2_h{h}.csv")
     
     # reduce data
     if max_size is not None:
-        factor = 8000/22.55
+        factor = 8000/20
         while(True):
     
             if (df1.shape[0] > max_size*factor):
@@ -68,11 +94,17 @@ def read_animate_save(h, forward_factor, name, max_size=None, fps=60):
 
     # FFMpegWriter to save the video
     writer = FFMpegWriter(fps=fps, metadata=dict(artist='Me'), bitrate=1800)
-    anim.save(f'videos/build/trajectory_{name}_h{h}.mp4', writer=writer)
+    anim.save(f'videos/build/trajectory_{algorithm}_h{h}.mp4', writer=writer)
 
     # display animation
     plt.show()
 
 
+if __name__ == "__main__":
+    path_config = "config.txt"
+    h, algorithm = get_params(path_config)
 
-read_animate_save(h="0_010000", forward_factor=1, fps=200, name="euler", max_size=5)
+    time_start = time.time()
+    read_animate_save(h=h, forward_factor=30, fps=60, algorithm=algorithm, max_size=3)
+    time_end = time.time()
+    print(f"Animation duration: {time_end-time_start:.1f}s")
